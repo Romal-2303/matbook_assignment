@@ -1,0 +1,232 @@
+@use "../../designSystem/library" as *;
+
+.login-page-container {
+  display: flex;
+  height: 100vh;
+  background-image: url("../../assets/images/bg-img.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: $font-primary;
+  position: relative;
+
+  .shadow-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      46.33deg,
+      rgba(33, 33, 33, 0.839216) 0%,
+      rgba(66, 66, 66, 0.239216) 178.98%
+    );
+    z-index: 1;
+  }
+
+  .company-info-wrapper {
+    z-index: 11;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+
+    .company-info-child-container {
+      .logo-container {
+        width: fit-content;
+      }
+
+      .company-container {
+        width: 380px;
+        margin-top: 118px;
+
+        h2 {
+          font-size: 40px;
+          line-height: 47px;
+        }
+
+        p {
+          margin-top: 24px;
+        }
+      }
+    }
+  }
+
+  .login-modal-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    flex: 1;
+    z-index: 11;
+
+    .login-modal {
+      width: 460px;
+      height: 768px;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      background-color: white;
+      padding: 40px;
+      font-family: $font-secondary;
+
+      .welcome-text {
+        font-size: 14px;
+      }
+
+      .login-text {
+        font-size: 26px;
+        font-weight: 600;
+      }
+
+      .login-form-container {
+        margin-top: 24px;
+
+        .email-input-container {
+          margin-top: 24px;
+          margin-bottom: 20px;
+        }
+
+        .email-input-container,
+        .password-input-container {
+          p {
+            font-size: 14px;
+            font-weight: 400;
+          }
+
+          input {
+            width: 380px;
+            height: 45px;
+            margin-top: 7px;
+            border-radius: 6px;
+            padding-left: 12px;
+            border: 1px solid $gray-100;
+            color: $gray-200;
+
+            &:focus {
+              outline-color: $primary-200;
+            }
+          }
+        }
+
+        .form-utility-btns {
+          margin-top: 20.5px;
+          font-size: 12.8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .remember-checkbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .tickmark-wrapper {
+              height: 22px;
+              width: 22px;
+              margin-right: 5px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+
+              .tickmark-container {
+                height: 100%;
+                width: 100%;
+                border: 1px solid $gray-100;
+                border-radius: 2px;
+              }
+            }
+
+            input {
+              margin-right: 5px;
+            }
+          }
+          p {
+            cursor: pointer;
+          }
+        }
+
+        .login-btn {
+          border-radius: 8px;
+          height: 56px;
+          font-size: 16px;
+          background-color: $primary-200;
+          width: 100%;
+          color: white;
+          text-align: center;
+          border: none;
+          margin-top: 20px;
+          cursor: pointer;
+        }
+
+        .or-separator {
+          height: 1px;
+          width: 100%;
+          background-color: $gray-100;
+          margin: 29px 0rem;
+          position: relative;
+
+          p {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: $primary-300;
+            background-color: white;
+            padding: 0rem 24px;
+          }
+        }
+
+        .login-with-other-options {
+          .google-btn,
+          .facebook-btn,
+          .apple-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid $gray-300;
+            color: $gray-400;
+            height: 48px;
+            font-size: 12.8px;
+            font-weight: 400;
+            gap: 40px;
+            margin-top: 9px;
+            border-radius: 8px;
+            cursor: pointer;
+
+            .btn-text {
+              position: relative;
+              width: 285px;
+              text-align: center;
+
+              .icon-container {
+                position: absolute;
+                left: 0px;
+                top: 50%;
+                transform: translate(0%, -40%);
+              }
+            }
+          }
+
+          .google-btn {
+            margin-top: 0px;
+          }
+        }
+
+        .new-user-text {
+          margin-top: 40px;
+          font-size: 12.8px;
+          text-align: center;
+          font-weight: 400;
+
+          span {
+            font-weight: 700;
+            text-decoration: underline;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}

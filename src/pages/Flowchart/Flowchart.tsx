@@ -15,11 +15,21 @@ import { ReactComponent as RedoIcon } from "../../assets/icons/redo_icon.svg";
 import { ReactComponent as EpicenterIcon } from "../../assets/icons/green_epicenter.svg";
 import { ReactComponent as PlusIcon } from "../../assets/icons/plus_icon.svg";
 import { ReactComponent as MinusIcon } from "../../assets/icons/minus_icon.svg";
+import { ReactComponent as CheckmarkIcon } from "../../assets/icons/checkmark_icon.svg";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import {
+  fetchFlowchartNodes,
+  addFlowchartNode,
+} from "../../redux/slices/flowchartData/flowchartData.slice";
+import { toast } from "react-toastify";
 
 let tempNodesArr = [] as any;
 
 const Flowchart = () => {
-  const { mode } = useParams<{ mode: string }>();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { mode, id } = useParams<{ mode: string; id: string }>();
 
   // States
   const [scale, setScale] = useState(1); // Zoom level
@@ -40,6 +50,12 @@ const Flowchart = () => {
   const lastMousePosition = useRef({ x: 0, y: 0 });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(fetchFlowchartNodes(id)).then((data: any) => {
+      setNodesArr(data.payload?.connections);
+    });
+  }, [dispatch]);
 
   useEffect(() => {
     setEditMode(mode === "edit" ? true : false);
@@ -219,6 +235,17 @@ const Flowchart = () => {
     });
   };
 
+  const saveClickHandler = () => {
+    const newNode = {
+      id: id,
+      payload: { connections: nodesArr },
+    };
+
+    dispatch(addFlowchartNode(newNode)).then((data) => {
+      toast.success("Chart updated successfully!");
+    });
+  };
+
   return (
     <div className={classes["flow-chart-container"]}>
       <div className={classes["header"]}>
@@ -228,7 +255,10 @@ const Flowchart = () => {
           </p>
           <p>Untitled</p>
           {editMode ? (
-            <div className={classes["save-icon-container"]}>
+            <div
+              className={classes["save-icon-container"]}
+              onClick={saveClickHandler}
+            >
               <SaveIcon />
             </div>
           ) : (
@@ -281,12 +311,16 @@ const Flowchart = () => {
                   onClick={nodeClickHandler(index, el)}
                 >
                   {el}
-                  <div
-                    className={classes["delete-icon-container"]}
-                    onClick={deleteIconClickHandler(index)}
-                  >
-                    <DeleteIcon />
-                  </div>
+                  {editMode ? (
+                    <div
+                      className={classes["delete-icon-container"]}
+                      onClick={deleteIconClickHandler(index)}
+                    >
+                      <DeleteIcon />
+                    </div>
+                  ) : (
+                    <CheckmarkIcon />
+                  )}
                 </div>
 
                 <div className={classes["node-connector"]}>

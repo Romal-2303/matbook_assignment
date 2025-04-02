@@ -3,6 +3,11 @@ declare module "*.module.scss" {
   export default classes;
 }
 
+declare module "redux-persist/lib/storage";
+declare module "redux-persist/es/persistStore";
+declare module "redux-persist/es/persistReducer";
+declare module "redux-logger";
+
 declare module "*.svg" {
   import * as React from "react";
   export const ReactComponent: React.FunctionComponent<

@@ -1,0 +1,222 @@
+@use "../../designSystem/library" as *;
+
+.flow-chart-container {
+  height: 100vh;
+  font-family: $font-secondary;
+
+  background-color: $primary-700;
+  background-image: radial-gradient($primary-600 2.5px, transparent 2.5px);
+  background-size: 30px 30px;
+  overflow: hidden;
+
+  .header {
+    position: relative;
+    padding: 40px;
+    z-index: 11;
+
+    .go-back-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      font-weight: 600;
+      background-color: white;
+      width: 303px;
+      height: 38px;
+      border-radius: 6px;
+
+      .go-back-text {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      .save-icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .status-text {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 400;
+        border-radius: 4px;
+        background-color: $primary-400;
+        color: $primary-500;
+        width: 52px;
+        height: 22px;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .flow-chart-wrapper {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    // margin-top: 73px;
+    // width: 500vw;
+    // cursor: move;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    min-height: 100vh;
+    width: 100%;
+    padding-top: 151px;
+
+    .flow-chart-container {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .start-circle-container {
+        margin-bottom: -7px;
+      }
+      .end-circle-container {
+        margin-top: 4px;
+      }
+
+      .node-container {
+        width: 300px;
+        height: 64px;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid $primary-800;
+        margin-top: 3px;
+        padding: 23px 18px 23px 24px;
+        color: $primary-900;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+
+        &:hover {
+          background-color: $primary-1000;
+        }
+
+        .delete-icon-container {
+          cursor: pointer;
+        }
+      }
+
+      .node-connector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 112;
+
+        .add-circle-container {
+          position: absolute;
+          cursor: pointer;
+          z-index: 112;
+        }
+      }
+    }
+  }
+
+  .undo-redo-btns-container {
+    width: 84px;
+    height: 40px;
+    border-radius: 8.57px;
+    background-color: white;
+    position: absolute;
+    bottom: 75px;
+    left: 40px;
+    border: 1.43px solid $gray-100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 11;
+
+    .undo-btn {
+      border-right: 1.43px solid $gray-100;
+    }
+
+    .undo-btn,
+    .redo-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 11.43px;
+      cursor: pointer;
+    }
+  }
+
+  .zoom-scale-container {
+    position: absolute;
+    right: 39px;
+    bottom: 75px;
+    border-radius: 8.57px;
+    height: 40px;
+    width: 381px;
+    background-color: white;
+    border: 1px solid $gray-100;
+    display: flex;
+    z-index: 11;
+
+    .epicenter-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid $gray-100;
+      width: 40px;
+    }
+
+    .icons-range-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      .plus-icon-container,
+      .minus-icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+      }
+
+      .range-selector-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        input {
+        }
+
+        .slider {
+          width: 230px;
+        }
+
+        .slider {
+          -webkit-appearance: none;
+          width: 230px;
+          height: 5px;
+          background: $gray-500;
+          outline: none;
+          -webkit-transition: 0.2s;
+          transition: opacity 0.2s;
+          border-radius: 4px;
+        }
+
+        .slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          background: #4f4f4f;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

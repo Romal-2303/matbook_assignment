@@ -1,3 +1,5 @@
+import Flowchart from "../Flowchart/Flowchart";
+import Homepage from "../Homepage/Homepage";
 import Login from "../Login/Login";
 
 type typeRoutesConfig = {
@@ -6,27 +8,16 @@ type typeRoutesConfig = {
 };
 
 export const routes: typeRoutesConfig[] = [
-  // {
-  //   path: "/",
-  //   component: HomePage,
-  // },
-  // {
-  //   path: "/checkout",
-  //   component: Checkout,
-  // },
+  {
+    path: "/",
+    component: Homepage,
+  },
   {
     path: "/login",
     component: Login,
   },
-  // {
-  //   path: "/signup",
-  //   component: LoginSignup,
-  // },
+  {
+    path: "/flowchart/:mode/:id",
+    component: Flowchart,
+  },
 ];
-
-// export const protectedRoutes: typeRoutesConfig[] = [
-//   {
-//     path: "/checkout",
-//     component: Checkout,
-//   },
-// ];

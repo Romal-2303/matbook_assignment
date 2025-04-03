@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import AddNodePopup from "./AddNodePopup/AddNodePopup";
-import ConfigurationModal from "./ConfigurationModal/ConfigurationModal";
-import classes from "./Flowchart.module.scss";
+import classes from "./FlowChart.module.scss";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import AddNodePopup from "../../pages/Flowchart/AddNodePopup/AddNodePopup";
+import ConfigurationModal from "../../pages/Flowchart/ConfigurationModal/ConfigurationModal";
 import { ReactComponent as StartCircle } from "../../assets/icons/start_circle.svg";
 import { ReactComponent as EndCircle } from "../../assets/icons/end_circle.svg";
 import { ReactComponent as AddCircle } from "../../assets/icons/add_circle.svg";
@@ -16,67 +16,39 @@ import { ReactComponent as EpicenterIcon } from "../../assets/icons/green_epicen
 import { ReactComponent as PlusIcon } from "../../assets/icons/plus_icon.svg";
 import { ReactComponent as MinusIcon } from "../../assets/icons/minus_icon.svg";
 import { ReactComponent as CheckmarkIcon } from "../../assets/icons/checkmark_icon.svg";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "../../redux/store";
-import {
-  fetchFlowchartNodes,
-  updateFlowchartNode,
-} from "../../redux/slices/flowchartData/flowchartData.slice";
-import { toast } from "react-toastify";
-import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
-import { selectFlowchartNodes } from "../../redux/slices/flowchartData/flowchartData.selector";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
-const Flowchart = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const receivedData = useSelector(selectFlowchartNodes);
+interface FlowChartProps {
+  mode: "edit" | "add" | "view";
+  loading?: boolean;
+  nodesArr: any[];
+  setNodesArr: any;
+  saveClickHandler: any;
+}
 
-  const { mode, id } = useParams<{ mode: string; id: string }>();
-
-  // States
+const FlowChart = ({
+  mode,
+  loading = false,
+  nodesArr = [],
+  setNodesArr,
+  saveClickHandler,
+}: FlowChartProps) => {
   const [scale, setScale] = useState(1); // Zoom level
   const [position, setPosition] = useState({ x: 0, y: 0 }); // Panning position
   const [isDragging, setIsDragging] = useState(false);
-  const [nodesArr, setNodesArr] = useState<any[]>([]);
   const [addCirclehoveredIndex, setAddCircleHoveredIndex] = useState<
     null | number
   >(null);
-  const [editMode, setEditMode] = useState(mode === "edit" ? true : false);
   const [popupActiveIndex, setPopupActiveIndex] = useState<null | number>(null);
   const [configPopupIndex, setConfigPopupIndex] = useState<null | number>(null);
   const [configPopupType, setConfigPopupType] = useState<string>("");
   const [trackHistory, setTrackHistory] = useState<any[]>([]);
   const [undoHistory, setUndoHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
 
   // Refs
   const lastMousePosition = useRef({ x: 0, y: 0 });
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setLoading(true);
-    dispatch(fetchFlowchartNodes(id))
-      .unwrap()
-      .catch(() => {
-        toast.error(
-          <div>
-            <strong>Error while fetching data</strong>
-            <p>Refresh the page or please try again later !</p>
-          </div>
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [dispatch]);
-
-  useEffect(() => {
-    setNodesArr(receivedData?.[0]?.connections ?? []);
-  }, [receivedData]);
-
-  useEffect(() => {
-    setEditMode(mode === "edit" ? true : false);
-  }, [mode]);
 
   // Handles Zooming In & Out
   const handleWheel = (event: any) => {
@@ -252,31 +224,6 @@ const Flowchart = () => {
     });
   };
 
-  const saveClickHandler = () => {
-    const patchedPayload = {
-      id: id,
-      payload: { connections: nodesArr },
-    };
-    setLoading(true);
-
-    dispatch(updateFlowchartNode(patchedPayload))
-      .unwrap()
-      .then((data) => {
-        toast.success("Chart updated successfully!");
-      })
-      .catch((err) => {
-        toast.error(
-          <div>
-            <strong>Error while updating data</strong>
-            <p>Refresh the page or please try again later !</p>
-          </div>
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   return (
     <div className={classes["flow-chart-container"]}>
       <div className={classes["header"]}>
@@ -285,10 +232,10 @@ const Flowchart = () => {
             &lt;- Go Back
           </p>
           <p>Untitled</p>
-          {editMode ? (
+          {mode === "edit" || mode == "add" ? (
             <div
               className={classes["save-icon-container"]}
-              onClick={saveClickHandler}
+              onClick={() => saveClickHandler?.()}
             >
               <SaveIcon />
             </div>
@@ -318,7 +265,7 @@ const Flowchart = () => {
 
           <div className={classes["node-connector"]}>
             <ArrowWithTail />
-            {editMode && (
+            {(mode === "edit" || mode == "add") && (
               <div
                 className={classes["add-circle-container"]}
                 onMouseEnter={mouseEnterHandler(0)}
@@ -342,7 +289,7 @@ const Flowchart = () => {
                   onClick={nodeClickHandler(index, el)}
                 >
                   {el}
-                  {editMode ? (
+                  {mode === "edit" || mode === "add" ? (
                     <div
                       className={classes["delete-icon-container"]}
                       onClick={deleteIconClickHandler(index)}
@@ -356,7 +303,7 @@ const Flowchart = () => {
 
                 <div className={classes["node-connector"]}>
                   <ArrowWithTail />
-                  {editMode && (
+                  {(mode === "edit" || mode === "add") && (
                     <div
                       className={classes["add-circle-container"]}
                       onClick={addClickHandler(index + 1)}
@@ -442,4 +389,4 @@ const Flowchart = () => {
   );
 };
 
-export default Flowchart;
+export default FlowChart;

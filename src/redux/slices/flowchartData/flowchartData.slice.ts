@@ -12,28 +12,35 @@ const initialState: any = {
 // Async thunk example (fetch nodes)
 export const fetchFlowchartNodes = createAsyncThunk<
   any[],
-  any,
+  string | undefined,
   { state: RootState }
 >("flowchart/fetchNodes", async (id, { rejectWithValue }) => {
   try {
     const response = await fetch(
-      `https://67ed62a74387d9117bbd700c.mockapi.io/workflow/flowchart/${
-        id ? id : ""
+      `https://67ed62a74387d9117bbd700c.mockapi.io/workflow/flowchart${
+        id ? `/${id}` : ""
       }`
     );
     if (!response.ok) throw new Error("Failed to fetch");
 
-    return await response.json();
+    const data = await response.json();
+
+    // If response is an object (i.e., single node with id), wrap it in an array
+    if (id && typeof data === "object" && !Array.isArray(data)) {
+      return [data]; // Wrap it into an array
+    }
+
+    return data;
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
 });
 
-export const addFlowchartNode = createAsyncThunk<
+export const updateFlowchartNode = createAsyncThunk<
   any,
   any,
   { state: RootState }
->("flowchart/addNode", async (node, { rejectWithValue }) => {
+>("flowchart/updateNode", async (node, { rejectWithValue }) => {
   try {
     const response = await fetch(
       `https://67ed62a74387d9117bbd700c.mockapi.io/workflow/flowchart/${node.id}`,
@@ -52,7 +59,59 @@ export const addFlowchartNode = createAsyncThunk<
 
     return node;
   } catch (error: any) {
-    console.error("Error adding node:", error.message); // Log the error
+    return rejectWithValue(error.message);
+  }
+});
+
+// Async thunk to delete a node
+export const deleteFlowchartNode = createAsyncThunk<
+  string,
+  any,
+  { state: RootState }
+>("flowchart/deleteNode", async (id, { rejectWithValue }) => {
+  try {
+    const response = await fetch(
+      `https://67ed62a74387d9117bbd700c.mockapi.io/workflow/flowchart/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete node");
+    }
+
+    return id;
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const addFlowchartNode = createAsyncThunk<
+  any,
+  any,
+  { state: RootState }
+>("flowchart/addNode", async (nodeData, { rejectWithValue }) => {
+  try {
+    const response = await fetch(
+      "https://67ed62a74387d9117bbd700c.mockapi.io/workflow/flowchart",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nodeData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to add node");
+    }
+
+    const data = await response.json();
+
+    return data;
+  } catch (error: any) {
     return rejectWithValue(error.message);
   }
 });
@@ -61,11 +120,7 @@ export const addFlowchartNode = createAsyncThunk<
 const flowchartSlice = createSlice({
   name: "flowchart",
   initialState,
-  reducers: {
-    // removeNode: (state, action: PayloadAction<string>) => {
-    //   state.nodes = state.nodes.filter((node) => node.id !== action.payload);
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchFlowchartNodes.pending, (state) => {
@@ -74,7 +129,10 @@ const flowchartSlice = createSlice({
       })
       .addCase(fetchFlowchartNodes.fulfilled, (state, action) => {
         state.loading = false;
-        state.nodes = action.payload;
+        // state.nodes = action.payload;
+        state.nodes = Array.isArray(action.payload)
+          ? action.payload
+          : [action.payload];
       })
       .addCase(fetchFlowchartNodes.rejected, (state, action) => {
         state.loading = false;
@@ -86,13 +144,51 @@ const flowchartSlice = createSlice({
       })
       .addCase(addFlowchartNode.fulfilled, (state, action) => {
         state.loading = false;
+        state.nodes.push(action.payload); // Add new node to state
       })
       .addCase(addFlowchartNode.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateFlowchartNode.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateFlowchartNode.fulfilled, (state, action) => {
+        state.loading = false;
+
+        // Find the index of the updated node in state.nodes
+        const index = state.nodes.findIndex(
+          (node: any) => node.id === action.payload.id
+        );
+
+        if (index !== -1) {
+          // Replace the existing node with the updated node
+          state.nodes[index] = {
+            ...state.nodes[index],
+            ...action.payload.payload,
+          };
+        }
+      })
+      .addCase(updateFlowchartNode.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteFlowchartNode.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteFlowchartNode.fulfilled, (state, action) => {
+        state.loading = false;
+        state.nodes = state.nodes.filter(
+          (node: any) => node.id !== action.payload
+        );
+      })
+      .addCase(deleteFlowchartNode.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
   },
 });
 
-// export const { removeNode } = flowchartSlice.actions;
 export default flowchartSlice.reducer;

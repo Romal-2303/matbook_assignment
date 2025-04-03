@@ -1,0 +1,106 @@
+@use "../../designSystem/library" as *;
+
+.table-container {
+  width: 100%;
+  height: fit-content;
+  font-family: $font-secondary;
+  border-collapse: collapse;
+  overflow-x: hidden;
+
+  thead {
+    // position: sticky;
+    // top: 0;
+    background-color: white;
+    border-bottom: 2px solid #f68b21;
+
+    tr {
+      th {
+        text-align: start;
+        font-weight: 500;
+        font-size: 14px;
+        padding-bottom: 9px;
+        width: 200px;
+        padding-left: 36px;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        font-size: 14px;
+        font-weight: 400;
+        color: $primary-900;
+        padding-left: 36px;
+        border-bottom: 1px solid $primary-700;
+        padding-bottom: 26px;
+        padding-top: 26px;
+      }
+    }
+
+    .nested-table-container {
+      background-color: #fffaf2;
+      max-height: 152px;
+      padding: 22px 36px;
+      overflow-y: scroll;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+
+      .tracker-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        // gap: 30px;
+        height: 135px;
+      }
+      .info-wrapper {
+        position: relative;
+        .line-for-icons {
+          position: absolute;
+          top: 6px;
+          left: 7px;
+          height: calc(100% + 10px);
+          width: 2px;
+          background-color: #ffe1d2;
+          z-index: 7;
+        }
+
+        .info-container {
+          display: flex;
+          height: 22px;
+          gap: 16px;
+          font-size: 14px;
+          margin-top: 36px;
+
+          .passed-tag,
+          .failed-tag {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 74px;
+            border-radius: 4px;
+            background-color: $primary-400;
+          }
+
+          .failed-tag {
+            background-color: #f8aea8;
+          }
+
+          .redirect-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+          }
+        }
+
+        .first-info-container {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+}

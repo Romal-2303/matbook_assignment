@@ -1,0 +1,14 @@
+@use "../../../designSystem/library" as *;
+
+.make-sure-text {
+  font-size: 14px;
+  color: #333333;
+  font-weight: 600;
+}
+
+.warning-text {
+  color: $primary-200;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+}

@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import classes from "./ConfigurationModal.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { setApiFormData } from "../../../redux/slices/apiFormData/apiFormData.slice";
-import { RootState } from "../../../redux/store";
-import { selectApiFormData } from "../../../redux/slices/apiFormData/apiFormData.selector";
+import { useState } from "react";
 
 interface ConfigProps {
   receivedType: string;
@@ -14,19 +11,13 @@ const ConfigurationModal = ({
   receivedType,
   setConfigPopupIndex,
 }: ConfigProps) => {
-  const dispatch = useDispatch();
-
-  const apiFormData = useSelector((state: RootState) =>
-    selectApiFormData(state)
-  );
+  const [inputObject, setInputObject] = useState({});
 
   const overlayScreenClickHandler = () => {
     setConfigPopupIndex(null);
   };
 
-  const inputChangeHandler = (keyName: string) => (event: any) => {
-    dispatch(setApiFormData({ ...apiFormData, [keyName]: event.target.value }));
-  };
+  const inputChangeHandler = (keyName: string) => (event: any) => {};
 
   return (
     <div className={classes["config-modal-wrapper"]}>
@@ -45,7 +36,6 @@ const ConfigurationModal = ({
               <label>Method</label>
               <input
                 placeholder="Type here..."
-                value={apiFormData.method}
                 onChange={inputChangeHandler("method")}
               />
             </div>
@@ -53,7 +43,6 @@ const ConfigurationModal = ({
               <label>URL</label>
               <input
                 placeholder="Type here..."
-                value={apiFormData.url}
                 onChange={inputChangeHandler("url")}
               />
             </div>
@@ -61,7 +50,6 @@ const ConfigurationModal = ({
               <label>Headers</label>
               <input
                 placeholder="Header Name"
-                value={apiFormData.header}
                 onChange={inputChangeHandler("header")}
               />
             </div>
@@ -69,7 +57,6 @@ const ConfigurationModal = ({
               <label>Body</label>
               <textarea
                 placeholder="Enter Descriptions..."
-                value={apiFormData.body}
                 onChange={inputChangeHandler("body")}
               />
             </div>
@@ -79,7 +66,6 @@ const ConfigurationModal = ({
             <label>{receivedType}</label>
             <input
               placeholder="Type here..."
-              value={apiFormData.email}
               onChange={inputChangeHandler(
                 receivedType === "Email" ? "email" : "textbox"
               )}

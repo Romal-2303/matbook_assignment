@@ -1,4 +1,4 @@
-import classes from "./Login.module.scss";
+import classes from "./SignUp.module.scss";
 import styles from "../../designSystem/_classes.module.scss";
 import CompanyLogo from "../../assets/icons/company_logo.svg";
 import { ReactComponent as GoogleIcon } from "../../assets/icons/google.svg";
@@ -7,62 +7,47 @@ import { ReactComponent as FacebookIcon } from "../../assets/icons/facebook.svg"
 import { ReactComponent as Checkbox } from "../../assets/icons/checkbox.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import { toast } from "react-toastify";
-import cryptoRandomString from "crypto-random-string";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 interface LoginProps {}
 
-const Login = ({}: LoginProps) => {
+const SignUp = ({}: LoginProps) => {
   const navigate = useNavigate();
   const [tickmarkVisibility, setTickmarVisibility] = useState(false);
   const [emailValue, setEmailvalue] = useState("");
   const [passwordValue, setPasswordvalue] = useState("");
   const [btnDisabled, setBtnDisabled] = useState(false);
 
-  const loginClickHandler = async () => {
-    setBtnDisabled(true);
-    const token = cryptoRandomString({ length: 32 });
-    const response = await fetch(
-      "https://67ed62a74387d9117bbd700c.mockapi.io/workflow/users"
-    );
-    const users = await response.json();
-
-    const receviedUser = users.find(
-      (el: any) => el.email === emailValue && el.password === passwordValue
-    );
-
-    if (receviedUser) {
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("loginCounter", "0");
-      navigate("/");
-    } else {
-      let counter = parseInt(localStorage.getItem("loginCounter") ?? "0");
-
-      localStorage.setItem("loginCounter", `${counter + 1}`);
-
-      if (counter === 1) {
-        setBtnDisabled(false);
-        alert(
-          "Having issues while logging in?\n\n" +
-            "Here are the credentials\n\n" +
-            "Email: admin@gmail.com\n" +
-            "Password: admin12345"
-        );
-        localStorage.setItem("loginCounter", "0");
-      }
-
-      setBtnDisabled(false);
-      toast.error("Invalid email or password. Create a new account maybe ?");
-    }
-  };
-
   const tickMarkClickHandler = () => {
     setTickmarVisibility((prevState) => !prevState);
   };
 
-  const signUpClickHandler = () => {
-    navigate("/signup");
+  const loginClickHandler = () => {
+    navigate("/login");
+  };
+
+  const createAccountClickHandler = async () => {
+    setBtnDisabled(true);
+
+    fetch("https://67ed62a74387d9117bbd700c.mockapi.io/workflow/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: emailValue, password: passwordValue }),
+    })
+      .then((data) => {
+        toast.success("Account Created Successfully!");
+        navigate("/login");
+      })
+      .catch((err) => {
+        toast.error("Error while creating accout. Please try again!");
+      })
+      .finally(() => {
+        setBtnDisabled(false);
+      });
+
+    // const data = await response.json();
+    // return data;
   };
 
   return (
@@ -86,8 +71,8 @@ const Login = ({}: LoginProps) => {
       </div>
       <div className={classes["login-modal-container"]}>
         <div className={classes["login-modal"]}>
-          <p className={classes["welcome-text"]}>WELCOME BACK!</p>
-          <h2 className={classes["login-text"]}>Log In to your Account</h2>
+          <p className={classes["welcome-text"]}>Hey There!</p>
+          <h2 className={classes["login-text"]}>Create a New Account</h2>
           <div className={classes["login-form-container"]}>
             <div className={classes["email-input-container"]}>
               <p className={classes["input-text"]}>Email</p>
@@ -127,9 +112,9 @@ const Login = ({}: LoginProps) => {
                   ? `${classes["login-btn"]} ${classes["disabled-btn"]}`
                   : `${classes["login-btn"]}`
               }
-              onClick={loginClickHandler}
+              onClick={createAccountClickHandler}
             >
-              Log In
+              Create Account
               {btnDisabled && (
                 <div className={classes["spinner-wrapper"]}>
                   <LoadingSpinner
@@ -172,7 +157,8 @@ const Login = ({}: LoginProps) => {
             </div>
             <div className={classes["new-user-text"]}>
               <p>
-                New User? <span onClick={signUpClickHandler}>SIGN UP HERE</span>
+                Already a User?{" "}
+                <span onClick={loginClickHandler}>LOGIN HERE</span>
               </p>
             </div>
           </div>
@@ -182,4 +168,4 @@ const Login = ({}: LoginProps) => {
   );
 };
 
-export default Login;
+export default SignUp;
